@@ -1,18 +1,10 @@
 #include <iostream>
-#include <random>   
+#include <random>
 #include "tictactoe.h"
 using namespace std;
 
-
 void TicTacToe::affichage()
 {
-   /*  cout << "  ---------" << endl;
-    cout << "  " << T[0][0] << " | " << T[0][1] << " | " << T[0][2] << endl;
-    cout << "  ---------" << endl;
-    cout << "  " << T[1][0] << " | " << T[1][1] << " | " << T[1][2] << endl;
-    cout << "  ---------" << endl;
-    cout << "  " << T[2][0] << " | " << T[2][1] << " | " << T[2][2] << endl;
-    cout << "  ---------" << endl; */
     cout << "  ---------" << endl;
     for (int i = 0; i < 3; ++i)
     {
@@ -37,9 +29,9 @@ bool TicTacToe::plein()
 {
     for (int i = 0; i < 3; i++)
     {
-         for ( int j = 0; j < 3; j++ )
+        for (int j = 0; j < 3; j++)
         {
-            if ( T[i][j] == 0 )
+            if (T[i][j] == 0)
             {
                 return false;
             }
@@ -50,47 +42,45 @@ bool TicTacToe::plein()
 
 int TicTacToe::arbitre()
 {
-    for (int i = 0; i < 3; i++) 
+    for (int i = 0; i < 3; i++)
     {
-        // vérification de chaque ligne si elle sont remplie et si elle ont les même valeur alors on retourne la valeur de l'une d'entre elle
-        if ( T[i][0] != 0  and T[i][0] ==  T[i][1] and T[i][1] ==  T[i][2] ) return T[i][2];
+        // vérification de chaque ligne
+        if (T[i][0] != 0 && T[i][0] == T[i][1] && T[i][1] == T[i][2])
+            return T[i][2];
     }
-    for (int i = 0; i < 3; i++) 
+    for (int i = 0; i < 3; i++)
     {
-        // vérification de chaque colonne si elle sont remplie et si elle ont les même valeur alors on retourne la valeur de l'une d'entre elle
-        if ( T[0][i] != 0  and T[0][i] ==  T[1][i] and T[1][i] ==  T[2][i] ) return T[2][i];
+        // vérification de chaque colonne
+        if (T[0][i] != 0 && T[0][i] == T[1][i] && T[1][i] == T[2][i])
+            return T[2][i];
     }
-    // vérification des 2 diagonales 
-    if ( T[0][0] != 0  and T[0][0] ==  T[1][1] and T[1][1] ==  T[2][2] ) return T[2][2];
-    if ( T[0][2] != 0  and T[0][2] ==  T[1][1] and T[1][1] ==  T[2][0] ) return T[2][0];
-    if (!plein()) return -2;
-    return 0;
+    // vérification des diagonales
+    if (T[0][0] != 0 && T[0][0] == T[1][1] && T[1][1] == T[2][2])
+        return T[2][2];
+    if (T[0][2] != 0 && T[0][2] == T[1][1] && T[1][1] == T[2][0])
+        return T[2][0];
+    
+    if (!plein()) return -2;  // Le jeu continue
+    return 0; // Match nul
 }
 
-bool TicTacToe::coupgagnant(int joueur, int &bestMove) 
+bool TicTacToe::coupgagnant(int joueur, int &bestMove)
 {
-    // Parcourir toutes les cases de la grille
-    for (int i = 0; i < 3; i++) 
+    for (int i = 0; i < 3; i++)
     {
-        for (int j = 0; j < 3; j++) 
+        for (int j = 0; j < 3; j++)
         {
-            if (T[i][j] == 0) // Vérifier si la case est vide
-            { 
-                int cas = i * 3 + j; // Convertir les indices en un seul entier
-
-                // Simuler le coup
-                jouer(cas,joueur);
-
-                // Vérifier si ce coup permet au joueur de gagner
-                if (arbitre() == joueur) 
+            if (T[i][j] == 0) // Case vide
+            {
+                int cas = i * 3 + j; // Conversion des indices en un index unique
+                jouer(cas, joueur); // Simuler le coup
+                if (arbitre() == joueur) // Vérifier si ce coup permet de gagner
                 {
-                    bestMove = cas; // Calculer la position linéaire
+                    bestMove = cas;
                     déjouer(cas); // Réinitialiser la case
                     return true; // Coup gagnant trouvé
                 }
-
-                // Réinitialiser la case
-               déjouer(cas);
+                déjouer(cas); // Réinitialiser la case
             }
         }
     }
@@ -99,45 +89,39 @@ bool TicTacToe::coupgagnant(int joueur, int &bestMove)
 
 bool TicTacToe::vide(int i)
 {
-    int ligne = i/3;
-    int colonne = i%3;
-    if ( T[ligne][colonne] == 0 ) return true;
-    return false;
+    int ligne = i / 3;
+    int colonne = i % 3;
+    return T[ligne][colonne] == 0;
 }
 
 void TicTacToe::jouer(int i, int joueur)
 {
-    int ligne = i/3;
-    int colonne = i%3;
+    int ligne = i / 3;
+    int colonne = i % 3;
     T[ligne][colonne] = joueur;
-
 }
 
-void TicTacToe::déjouer(int i) 
+void TicTacToe::déjouer(int i)
 {
-    int ligne = i/3;
-    int colonne = i%3;
+    int ligne = i / 3;
+    int colonne = i % 3;
     T[ligne][colonne] = 0;
 }
 
-int TicTacToe::JeuOrdi(int & bestMove) 
+int TicTacToe::JeuOrdi(int &bestMove)
 {
-    if (plein())
-    {
-        return(0);
-    }
-    if (coupgagnant(ORDI,bestMove))
-    {
-        return VORDI;
-    }
+    if (plein()) return 0;
+    if (coupgagnant(ORDI, bestMove)) return VORDI;
+
     int val = HUMAIN;
-    for ( int i = 0; i < 9; i++ )
+    int res;  // Déclaration de la variable 'res'
+    for (int i = 0; i < 9; i++)
     {
         if (vide(i))
         {
-            jouer(i,ORDI);
+            jouer(i, ORDI);
             res = JeuHumain(bestMove);
-            if ( res > val )
+            if (res > val)
             {
                 val = res;
                 bestMove = i;
@@ -148,24 +132,20 @@ int TicTacToe::JeuOrdi(int & bestMove)
     return val;
 }
 
-int TicTacToe::JeuHumain(int & bestMove)
+int TicTacToe::JeuHumain(int &bestMove)
 {
-    if (plein())
-    {
-        return(0);
-    }
-    if (coupgagnant(HUMAIN,bestMove))
-    {
-        return VHUMAIN;
-    }
-    val = ORDI;
-    for ( int i = 0; i < 9; i++ )
+    if (plein()) return 0;
+    if (coupgagnant(HUMAIN, bestMove)) return VHUMAIN;
+
+    int val = ORDI;
+    int res;  // Déclaration de la variable 'res'
+    for (int i = 0; i < 9; i++)
     {
         if (vide(i))
         {
-            jouer(i,HUMAIN);
+            jouer(i, HUMAIN);
             res = JeuOrdi(bestMove);
-            if ( res < val )
+            if (res < val)
             {
                 val = res;
                 bestMove = i;
